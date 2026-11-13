@@ -1,0 +1,17 @@
+<Window x:Class="Sniffer.Desktop.DisplaySettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="显示设置" Width="590" SizeToContent="Height" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="18">
+        <CheckBox x:Name="NamesBox" Content="显示从抓包中学到的 DNS 主机名" Margin="0,0,0,10"/>
+        <CheckBox x:Name="ColorsBox" Content="按规则给报文着色" Margin="0,0,0,10"/>
+        <TextBlock Text="每行一条显示表达式，按顺序使用首条匹配的颜色。格式为 表达式 = #RRGGBB。" TextWrapping="Wrap" Margin="0,0,0,8"/>
+        <TextBox x:Name="RulesBox" AcceptsReturn="True" Height="172" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"/>
+        <TextBlock x:Name="ErrorText" Foreground="Firebrick" TextWrapping="Wrap" Margin="0,7"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="恢复默认规则" Click="OnDefaults" Margin="0,0,7,0"/>
+            <Button Content="取消" IsCancel="True" Margin="0,0,7,0"/>
+            <Button Content="应用" Style="{StaticResource Primary}" Click="OnApply"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

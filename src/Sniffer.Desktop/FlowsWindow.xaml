@@ -1,0 +1,113 @@
+<Window x:Class="Sniffer.Desktop.FlowsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TCP 会话与进程" Width="1040" Height="715" MinWidth="780" MinHeight="550"
+        Background="#F2F6FB" Foreground="{StaticResource Ink}" FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="13"
+        WindowStartupLocation="CenterOwner" UseLayoutRounding="True">
+    <Grid Margin="17">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height=".8*"/>
+            <RowDefinition Height="7"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1.2*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,9">
+            <Button x:Name="FilterPacketsButton" DockPanel.Dock="Right" Content="在主界面查看所选会话" IsEnabled="False"
+                    Click="OnShowPackets" Style="{StaticResource Primary}" Margin="8,0,0,0"/>
+            <Button DockPanel.Dock="Right" Content="刷新" Click="OnRefresh"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="进程" Margin="0,0,8,0" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <ComboBox x:Name="Processes" Width="290" Height="33" DisplayMemberPath="Label"
+                          VerticalContentAlignment="Center" SelectionChanged="OnProcessChanged"/>
+                <TextBlock x:Name="CountLabel" Margin="13,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Muted}"/>
+            </StackPanel>
+        </DockPanel>
+        <DataGrid x:Name="FlowGrid" Grid.Row="1" AutoGenerateColumns="False" SelectionChanged="OnFlowChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="54"/>
+                <DataGridTextColumn Header="端点 A ↔ B" Binding="{Binding Endpoints}" Width="2*"/>
+                <DataGridTextColumn Header="进程" Binding="{Binding Processes}" Width="1.25*"/>
+                <DataGridTextColumn Header="状态" Binding="{Binding State}" Width="90"/>
+                <DataGridTextColumn Header="报文" Binding="{Binding Packets}" Width="63"/>
+                <DataGridTextColumn Header="载荷字节" Binding="{Binding Bytes}" Width="83"/>
+                <DataGridTextColumn Header="耗时" Binding="{Binding Duration}" Width="78"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"/>
+        <TextBlock Grid.Row="3" x:Name="FlowLabel" Text="选择会话查看时间线和重组数据" FontSize="15"
+                   FontWeight="SemiBold" Margin="0,4,0,8"/>
+        <TabControl Grid.Row="4" BorderBrush="{StaticResource Line}">
+            <TabItem Header="双向时间线">
+                <DataGrid x:Name="Timeline" AutoGenerateColumns="False" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="帧号" Binding="{Binding PacketNumber}" Width="62"/>
+                        <DataGridTextColumn Header="相对时间 (ms)" Binding="{Binding Milliseconds, StringFormat=F3}" Width="113"/>
+                        <DataGridTextColumn Header="方向" Binding="{Binding Direction}" Width="75"/>
+                        <DataGridTextColumn Header="标志" Binding="{Binding Flags}" Width="99"/>
+                        <DataGridTextColumn Header="Seq" Binding="{Binding Sequence}" Width="105"/>
+                        <DataGridTextColumn Header="Ack" Binding="{Binding Acknowledgment}" Width="105"/>
+                        <DataGridTextColumn Header="载荷" Binding="{Binding Bytes}" Width="64"/>
+                        <DataGridTextColumn Header="应用协议" Binding="{Binding Application}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="TLS 记录与证书" x:Name="TlsTab">
+                <DockPanel Margin="7">
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                        <Button x:Name="LoadKeys" DockPanel.Dock="Right" Content="载入 TLS 密钥日志"
+                                Click="OnLoadKeys" Margin="8,0,0,0"/>
+                        <Button x:Name="ClearKeys" DockPanel.Dock="Right" Content="清除解密结果"
+                                Click="OnClearKeys" IsEnabled="False"/>
+                        <TextBlock x:Name="TlsStatus" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <TabControl>
+                        <TabItem Header="记录与握手">
+                            <DataGrid x:Name="TlsRecords" AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="方向" Binding="{Binding Direction}" Width="70"/>
+                                    <DataGridTextColumn Header="偏移" Binding="{Binding Offset}" Width="70"/>
+                                    <DataGridTextColumn Header="长度" Binding="{Binding Length}" Width="65"/>
+                                    <DataGridTextColumn Header="内容" Binding="{Binding Content}" Width="*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="ToolTip" Value="{Binding Content}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="本地解密 A → B">
+                            <TextBox x:Name="TlsForward" IsReadOnly="True" FontFamily="Consolas" TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
+                        </TabItem>
+                        <TabItem Header="本地解密 B → A">
+                            <TextBox x:Name="TlsReverse" IsReadOnly="True" FontFamily="Consolas" TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
+                        </TabItem>
+                    </TabControl>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="重组数据">
+                <Grid Background="#F8FAFD" Margin="7">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <DockPanel>
+                        <TextBlock x:Name="ForwardStatus" DockPanel.Dock="Top" Text="A → B" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBox x:Name="Forward" IsReadOnly="True" FontFamily="Consolas" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
+                    </DockPanel>
+                    <DockPanel Grid.Column="2">
+                        <TextBlock x:Name="ReverseStatus" DockPanel.Dock="Top" Text="B → A" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBox x:Name="Reverse" IsReadOnly="True" FontFamily="Consolas" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

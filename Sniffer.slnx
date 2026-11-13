@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sniffer.Core/Sniffer.Core.csproj" />
+    <Project Path="src/Sniffer.Desktop/Sniffer.Desktop.csproj" />
+    <Project Path="src/Sniffer.Extcap/Sniffer.Extcap.csproj" />
+    <Project Path="src/Sniffer.Windows/Sniffer.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sniffer.Checks/Sniffer.Checks.csproj" />
+  </Folder>
+</Solution>

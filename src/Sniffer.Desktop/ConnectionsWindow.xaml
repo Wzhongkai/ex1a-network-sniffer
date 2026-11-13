@@ -1,0 +1,35 @@
+<Window x:Class="Sniffer.Desktop.ConnectionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="最近连接汇总" Width="1210" Height="690" MinWidth="680" MinHeight="425"
+        WindowStartupLocation="CenterOwner" UseLayoutRounding="True" Background="#F2F6FB"
+        FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="13" Loaded="OnRefresh" Closed="OnClosed">
+    <DockPanel Margin="17">
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <Button DockPanel.Dock="Right" Content="刷新" Click="OnRefresh" Margin="8,0,0,0"/>
+            <TextBlock x:Name="Status" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </DockPanel>
+        <TextBlock DockPanel.Dock="Bottom" Margin="0,8,0,0" TextWrapping="Wrap" Foreground="{StaticResource Muted}">
+            In/Out 按本机方向计数。回环和旁路按 A/B 方向计数。字节数按抓包原始长度累加。
+            国家和地区为 IP 地址段估计（DB-IP Country Lite，CC BY 4.0）。
+        </TextBlock>
+        <DataGrid x:Name="GridRows" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="方向" Binding="{Binding Row.Direction}" Width="100"/>
+                <DataGridTextColumn Header="本机 / A" Binding="{Binding LocalText}" Width="165"/>
+                <DataGridTextColumn Header="远端 / B" Binding="{Binding RemoteText}" Width="175"/>
+                <DataGridTextColumn Header="国家 / 地区" Binding="{Binding Country}" Width="128"/>
+                <DataGridTextColumn Header="本机端口" Binding="{Binding Row.LocalPorts}" Width="94"/>
+                <DataGridTextColumn Header="远端端口" Binding="{Binding Row.RemotePorts}" Width="94"/>
+                <DataGridTextColumn Header="In" Binding="{Binding Row.Incoming}" Width="50"/>
+                <DataGridTextColumn Header="Out" Binding="{Binding Row.Outgoing}" Width="50"/>
+                <DataGridTextColumn Header="In 字节" Binding="{Binding Row.BytesIn}" Width="85"/>
+                <DataGridTextColumn Header="Out 字节" Binding="{Binding Row.BytesOut}" Width="85"/>
+                <DataGridTextColumn Header="TCP 会话" Binding="{Binding Row.TcpFlows}" Width="80"/>
+                <DataGridTextColumn Header="协议" Binding="{Binding Row.Protocols}" Width="100"/>
+                <DataGridTextColumn Header="进程" Binding="{Binding Row.Processes}" Width="150"/>
+                <DataGridTextColumn Header="最后活动" Binding="{Binding Row.LastTime}" Width="106"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

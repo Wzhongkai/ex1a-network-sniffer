@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Sniffer.Core/Sniffer.Core.csproj" />
+    <Content Include="../../vendor/WinDivert/WinDivert.dll;../../vendor/WinDivert/WinDivert64.sys"
+             Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+</Project>
